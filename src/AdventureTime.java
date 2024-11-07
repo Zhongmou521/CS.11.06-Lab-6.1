@@ -10,7 +10,10 @@ public class AdventureTime {
      */
     public static void main(String[] args) throws IOException {
 
-
+            System.out.println(challengeOne("inputOneTwo.txt"));
+            System.out.println(challengeTwo("inputOneTwo.txt"));
+            System.out.println(challengeThree("inputThreeFour.txt"));
+            System.out.println(challengeFour("inputThreeFour.txt"));
     }
 
     /** TODO 1
@@ -22,7 +25,14 @@ public class AdventureTime {
      * @throws IOException
      */
     public static int challengeOne(String fileName) throws IOException {
-        return 0;
+        int[] depths = readFile(fileName);
+        int count = 0;
+        for (int i = 1; i < depths.length; i++) {
+            if (depths[i] > depths[i - 1]) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /** TODO 2
@@ -34,7 +44,16 @@ public class AdventureTime {
      * @throws FileNotFoundException
      */
     public static int challengeTwo(String fileName) throws FileNotFoundException {
-        return 0;
+        int[] depths = readFile(fileName);
+        int count = 0;
+        for (int i = 3; i < depths.length; i++) {
+            int currentSum = depths[i] + depths[i - 1] + depths[i - 2];
+            int previousSum = depths[i - 1] + depths[i - 2] + depths[i - 3];
+            if (currentSum > previousSum) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /** TODO 3
@@ -46,7 +65,7 @@ public class AdventureTime {
      * @throws FileNotFoundException
      */
     public static int challengeThree(String fileName) throws FileNotFoundException {
-        return 0;
+        return calculatePositionAndDepth(fileName, false);
     }
 
     /** TODO 4
@@ -58,7 +77,43 @@ public class AdventureTime {
      * @throws FileNotFoundException
      */
     public static int challengeFour(String filename) throws FileNotFoundException {
-        return 0;
+        return calculatePositionAndDepth(filename, true);
+    }
+
+    public static int calculatePositionAndDepth(String fileName, boolean hasAim) throws FileNotFoundException{
+        File file = new File(fileName);
+        Scanner scanner = new Scanner(file);
+        int horizontalPosition = 0;
+        int depth = 0;
+        int aim = 0;
+
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            String[] parts = line.split(" ");
+            String command = parts[0];
+            int value = Integer.parseInt(parts[1]);
+
+            if (command.equals("forward")) {
+                horizontalPosition += value;
+                if (hasAim) {
+                    depth += aim * value;
+                }
+            } else if (command.equals("down")) {
+                if (hasAim) {
+                    aim += value;
+                } else {
+                    depth += value;
+                }
+            } else if (command.equals("up")) {
+                if (hasAim) {
+                    aim -= value;
+                } else {
+                    depth -= value;
+                }
+            }
+        }
+        scanner.close();
+        return horizontalPosition * depth;
     }
 
     /** This method will write the values passed as challengeOne, challengeTwo, challengeThree, and challengeFour to a text file.
